@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,7 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleMap mMap;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
@@ -112,7 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void requestLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationProviderClient.requestLocationUpdates(googleApiClient, locationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         }
 
     }
@@ -136,6 +137,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             counter++;
             LatLng myLocation = new LatLng(myLatitude, myLongitude);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
+
         }
 
 
@@ -170,5 +172,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onStop();
         googleApiClient.disconnect();
     }
-
 }
