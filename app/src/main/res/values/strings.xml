@@ -1,4 +1,9 @@
 <resources>
-    <string name="app_name">Gastrikeappen</string>
+
     <string name="title_activity_maps">Map</string>
+
+    <string name="app_name">NK-Appen</string>
+    <string name="map_button">Karta</string>
+    <string name="score_button">Poäng</string>
+
 </resources>
