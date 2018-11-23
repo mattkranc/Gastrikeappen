@@ -16,16 +16,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //Här kommer en liten kommentar /Mattias
 
-        startBt = (Button) findViewById(R.id.startBt);
-        startBt.setOnClickListener(new View.OnClickListener() {
+
+        final Button mapButton = findViewById(R.id.map_button);
+        mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                // Start NewActivity.class
-                Intent myIntent = new Intent(MainActivity.this,
+            public void onClick(View v) {
+                //kod för att öppna kartan i en ny view.
+              Intent myIntent = new Intent(MainActivity.this,
                         MapsActivity.class);
                 startActivity(myIntent);
             }
         });
 
+        final Button scoreButton = findViewById(R.id.score_button);
+        scoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //kod för att visa score osv...
+            }
+        });
     }
+
+
 }
