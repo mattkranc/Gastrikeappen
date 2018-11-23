@@ -255,8 +255,10 @@ public class MapsActivity extends AppCompatActivity
 */
                 //move map camera
 
-
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                if (counter == 0) {
+                    counter++;
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                }
 
                 Circle circle = mGoogleMap.addCircle(new CircleOptions().center(new LatLng(60.672884, 16.837481)).radius(10000).strokeColor(Color.RED).fillColor(Color.BLUE));
                 float[] distanceToPOI = new float[2];
