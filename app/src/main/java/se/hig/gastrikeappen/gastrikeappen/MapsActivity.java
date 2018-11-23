@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Looper;
@@ -39,6 +40,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -219,6 +222,8 @@ public class MapsActivity extends AppCompatActivity
             mGoogleMap.setMyLocationEnabled(true);
         }
 
+
+
     }
 
 
@@ -253,6 +258,15 @@ public class MapsActivity extends AppCompatActivity
 
                 mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
 
+                Circle circle = mGoogleMap.addCircle(new CircleOptions().center(new LatLng(60.672884, 16.837481)).radius(10000).strokeColor(Color.RED).fillColor(Color.BLUE));
+                float[] distanceToPOI = new float[2];
+                Location.distanceBetween(myLatitude, myLongitude, circle.getCenter().latitude, circle.getCenter().longitude, distanceToPOI);
+                if (circle.getRadius() >= distanceToPOI[0]) {
+                    // Innanför cirkelradien
+                    Toast.makeText(MapsActivity.this, "Innanför cirkeln!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Utanför cirkeln!", Toast.LENGTH_SHORT).show();
+                }
 
                 //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
             }
