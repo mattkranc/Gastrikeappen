@@ -62,7 +62,9 @@ public class MapsActivity extends AppCompatActivity
     Marker mCurrLocationMarker;
     FusedLocationProviderClient mFusedLocationClient;
     boolean locSet = false;
-    int counter = 0;
+    boolean showMes = true;
+    boolean showMes2 = true;
+    boolean zoomIn = true;
 
     private static final int REQUEST_PERMISSIONS_LOCATION_SETTINGS_REQUEST_CODE = 33;
 
@@ -112,7 +114,7 @@ public class MapsActivity extends AppCompatActivity
                             == PackageManager.PERMISSION_GRANTED) {
                         //Location Permission already granted
                         //Location Permission already granted
-
+                        zoomIn = true;
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                         mGoogleMap.setMyLocationEnabled(true);
 
@@ -239,9 +241,7 @@ public class MapsActivity extends AppCompatActivity
                 Location location = locationList.get(locationList.size() - 1);
                 Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
                 mLastLocation = location;
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
+
 
                 myLatitude = location.getLatitude();
                 myLongitude = location.getLongitude();
@@ -255,19 +255,26 @@ public class MapsActivity extends AppCompatActivity
 */
                 //move map camera
 
-                if (counter == 0) {
-                    counter++;
+                if (zoomIn) {
+
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                    zoomIn = false;
                 }
 
-                Circle circle = mGoogleMap.addCircle(new CircleOptions().center(new LatLng(60.672884, 16.837481)).radius(10000).strokeColor(Color.RED).fillColor(Color.BLUE));
+
+                Circle circle = mGoogleMap.addCircle(new CircleOptions().center(new LatLng(60.672884, 16.837481)).radius(10000).strokeColor(Color.RED));
                 float[] distanceToPOI = new float[2];
                 Location.distanceBetween(myLatitude, myLongitude, circle.getCenter().latitude, circle.getCenter().longitude, distanceToPOI);
-                if (circle.getRadius() >= distanceToPOI[0]) {
+                if (circle.getRadius() >= distanceToPOI[0] && showMes) {
+
                     // Innanför cirkelradien
                     Toast.makeText(MapsActivity.this, "Innanför cirkeln!", Toast.LENGTH_SHORT).show();
-                } else {
+                    showMes = false;
+                    showMes2 = true;
+                } else if (showMes2) {
                     Toast.makeText(getApplicationContext(), "Utanför cirkeln!", Toast.LENGTH_SHORT).show();
+                    showMes = true;
+                    showMes2 = false;
                 }
 
                 //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
