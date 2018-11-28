@@ -8,26 +8,19 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
@@ -117,7 +110,7 @@ public class MapsActivity extends AppCompatActivity
                         zoomIn = true;
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                         mGoogleMap.setMyLocationEnabled(true);
-
+                        zoomIn = true;
 
 
                         //mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
@@ -247,12 +240,12 @@ public class MapsActivity extends AppCompatActivity
                 myLongitude = location.getLongitude();
                 //Place current location marker
                 final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                /*MarkerOptions markerOptions = new MarkerOptions();
+                MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
-                markerOptions.title("Current Position");
+                markerOptions.title("Öjaren");
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-*/
+
                 //move map camera
 
                 if (zoomIn) {
@@ -260,6 +253,7 @@ public class MapsActivity extends AppCompatActivity
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                     zoomIn = false;
                 }
+
 
 
                 Circle circle = mGoogleMap.addCircle(new CircleOptions().center(new LatLng(60.672884, 16.837481)).radius(10000).strokeColor(Color.RED));
@@ -271,7 +265,7 @@ public class MapsActivity extends AppCompatActivity
                     Toast.makeText(MapsActivity.this, "Innanför cirkeln!", Toast.LENGTH_SHORT).show();
                     showMes = false;
                     showMes2 = true;
-                } else if (showMes2) {
+                } else if (circle.getRadius() < distanceToPOI[0] && showMes2) {
                     Toast.makeText(getApplicationContext(), "Utanför cirkeln!", Toast.LENGTH_SHORT).show();
                     showMes = true;
                     showMes2 = false;
