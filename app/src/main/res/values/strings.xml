@@ -5,5 +5,8 @@
     <string name="app_name">NK Appen</string>
     <string name="map_button">Karta</string>
     <string name="score_button">Poäng</string>
+    <string name="change_map_view">Vy</string>
+    <string name="zoomIn_button">+</string>
+    <string name="zoomOut_button">-</string>
 
 </resources>
