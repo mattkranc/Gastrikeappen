@@ -54,13 +54,16 @@ public class MapsActivity extends AppCompatActivity
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
     Location mLastLocation;
-    Marker mCurrLocationMarker;
+    Marker mOjarenLocationMarker;
     FusedLocationProviderClient mFusedLocationClient;
     boolean locSet = false;
     boolean showMes = true;
     boolean showMes2 = true;
     boolean zoomIn = true;
     int mapState = 0;
+
+    final LatLng ojarenLatLng = new LatLng(60.672884, 16.837481);
+
 
     private static final int REQUEST_PERMISSIONS_LOCATION_SETTINGS_REQUEST_CODE = 33;
 
@@ -211,6 +214,18 @@ public class MapsActivity extends AppCompatActivity
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
+        final LatLng ojarenLatLng = new LatLng(60.672884, 16.837481);
+
+        addMarker("Öjaren", ojarenLatLng);
+
+
+        /*MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(ojarenLatLng);
+        markerOptions.title("Öjaren");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        mOjarenLocationMarker = mGoogleMap.addMarker(markerOptions);
+        */
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -260,13 +275,9 @@ public class MapsActivity extends AppCompatActivity
 
                 myLatitude = location.getLatitude();
                 myLongitude = location.getLongitude();
-                //Place current location marker
+
                 final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title("Öjaren");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+
 
                 //move map camera
 
@@ -275,6 +286,7 @@ public class MapsActivity extends AppCompatActivity
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                     zoomIn = false;
                 }
+
 
 
                 Circle circle = mGoogleMap.addCircle(new CircleOptions().center(new LatLng(60.672884, 16.837481)).radius(10000).strokeColor(Color.RED));
@@ -292,10 +304,42 @@ public class MapsActivity extends AppCompatActivity
                     showMes2 = false;
                 }
 
+// här kan det vara saker
+                circleRadius(ojarenLatLng);
+
+
                 //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
             }
         }
     };
+
+
+    public void addMarker(String title, LatLng markerLatLng) {
+        //final LatLng ojarenLatLng = new LatLng(60.672884, 16.837481);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(markerLatLng);
+        markerOptions.title(title);
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        mOjarenLocationMarker = mGoogleMap.addMarker(markerOptions);
+    }
+
+    public void circleRadius(LatLng markerLatLng) {
+        Circle circle = mGoogleMap.addCircle(new CircleOptions().center(markerLatLng).radius(10000).strokeColor(Color.RED));
+        float[] distanceToPOI = new float[2];
+        Location.distanceBetween(myLatitude, myLongitude, circle.getCenter().latitude, circle.getCenter().longitude, distanceToPOI);
+        if (circle.getRadius() >= distanceToPOI[0] && showMes) {
+
+            // Innanför cirkelradien
+            Toast.makeText(MapsActivity.this, "Innanför cirkeln!", Toast.LENGTH_SHORT).show();
+            showMes = false;
+            showMes2 = true;
+        } else if (circle.getRadius() < distanceToPOI[0] && showMes2) {
+            Toast.makeText(getApplicationContext(), "Utanför cirkeln!", Toast.LENGTH_SHORT).show();
+            showMes = true;
+            showMes2 = false;
+        }
+
+    }
 
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
