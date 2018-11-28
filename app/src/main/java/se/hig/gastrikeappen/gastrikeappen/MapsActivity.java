@@ -15,6 +15,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -44,7 +46,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.List;
 
 public class MapsActivity extends AppCompatActivity
-        implements OnMapReadyCallback  {
+        implements OnMapReadyCallback {
 
     Double myLatitude = null;
     Double myLongitude = null;
@@ -58,7 +60,10 @@ public class MapsActivity extends AppCompatActivity
     boolean showMes = true;
     boolean showMes2 = true;
     boolean zoomIn = true;
+    int mapState = 0;
+
     final LatLng ojarenLatLng = new LatLng(60.672884, 16.837481);
+
 
     private static final int REQUEST_PERMISSIONS_LOCATION_SETTINGS_REQUEST_CODE = 33;
 
@@ -68,7 +73,6 @@ public class MapsActivity extends AppCompatActivity
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
 
 
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -85,10 +89,37 @@ public class MapsActivity extends AppCompatActivity
         locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 */
+        final Button changeViewButton = findViewById(R.id.change_map_view);
+        changeViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mapState == 0) {
+                    mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    mapState = 1;
+                } else {
+                    mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                    mapState = 0;
+                }
+            }
+        });
 
+        final Button zoomInButton = findViewById(R.id.zoomIn);
+        zoomInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mGoogleMap.animateCamera(CameraUpdateFactory.zoomIn());
+            }
+        });
+
+        final Button zoomOutButton = findViewById(R.id.zoomOut);
+        zoomOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mGoogleMap.animateCamera(CameraUpdateFactory.zoomOut());
+            }
+        });
 
     }
-
 
 
     public void checkForLocationSettings() {
@@ -100,57 +131,56 @@ public class MapsActivity extends AppCompatActivity
 
             settingsClient.checkLocationSettings(builder.build())
                     .addOnSuccessListener(MapsActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
-                @Override
-                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                    //Seftting is success...
-                    if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        //Location Permission already granted
-                        //Location Permission already granted
-                        zoomIn = true;
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-                        mGoogleMap.setMyLocationEnabled(true);
-                        zoomIn = true;
+                        @Override
+                        public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                            //Seftting is success...
+                            if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                                    Manifest.permission.ACCESS_FINE_LOCATION)
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                //Location Permission already granted
+                                //Location Permission already granted
+                                zoomIn = true;
+                                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                                mGoogleMap.setMyLocationEnabled(true);
+                                zoomIn = true;
 
 
-                        //mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
-                    }
-
-
-               }
-            })
-                .addOnFailureListener(MapsActivity.this, new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-
-                    int statusCode = ((ApiException) e).getStatusCode();
-                    switch (statusCode) {
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-
-                            try {
-                                // Show the dialog by calling startResolutionForResult(), and check the
-                                // result in onActivityResult().
-                                ResolvableApiException rae = (ResolvableApiException) e;
-                                rae.startResolutionForResult(MapsActivity.this, REQUEST_PERMISSIONS_LOCATION_SETTINGS_REQUEST_CODE);
-                            } catch (IntentSender.SendIntentException sie) {
-                                sie.printStackTrace();
+                                //mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                             }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            Toast.makeText(MapsActivity.this, "Setting change is not available.Try in another device.", Toast.LENGTH_LONG).show();
 
-                    }
 
-                }
-            });
+                        }
+                    })
+                    .addOnFailureListener(MapsActivity.this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+
+                            int statusCode = ((ApiException) e).getStatusCode();
+                            switch (statusCode) {
+                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+
+                                    try {
+                                        // Show the dialog by calling startResolutionForResult(), and check the
+                                        // result in onActivityResult().
+                                        ResolvableApiException rae = (ResolvableApiException) e;
+                                        rae.startResolutionForResult(MapsActivity.this, REQUEST_PERMISSIONS_LOCATION_SETTINGS_REQUEST_CODE);
+                                    } catch (IntentSender.SendIntentException sie) {
+                                        sie.printStackTrace();
+                                    }
+                                    break;
+                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                    Toast.makeText(MapsActivity.this, "Setting change is not available.Try in another device.", Toast.LENGTH_LONG).show();
+
+                            }
+
+                        }
+                    });
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-
 
 
     /**
@@ -204,17 +234,15 @@ public class MapsActivity extends AppCompatActivity
                 //Location Permission already granted
 
                 checkForLocationSettings();
-                        //Toast.makeText(MapsActivity.this, "Setloc " + locSet, Toast.LENGTH_LONG).show();
+                //Toast.makeText(MapsActivity.this, "Setloc " + locSet, Toast.LENGTH_LONG).show();
 
 
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mGoogleMap.setMyLocationEnabled(true);
 
-                    //if location settings is granted
+                //if location settings is granted
                 //mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 //mGoogleMap.setMyLocationEnabled(true);
-
-
 
 
             } else {
@@ -223,18 +251,14 @@ public class MapsActivity extends AppCompatActivity
             }
 
 
-        }
-        else {
+        } else {
 
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
         }
 
 
-
     }
-
-
 
 
     LocationCallback mLocationCallback = new LocationCallback() {
@@ -265,7 +289,24 @@ public class MapsActivity extends AppCompatActivity
 
 
 
+                Circle circle = mGoogleMap.addCircle(new CircleOptions().center(new LatLng(60.672884, 16.837481)).radius(10000).strokeColor(Color.RED));
+                float[] distanceToPOI = new float[2];
+                Location.distanceBetween(myLatitude, myLongitude, circle.getCenter().latitude, circle.getCenter().longitude, distanceToPOI);
+                if (circle.getRadius() >= distanceToPOI[0] && showMes) {
+
+                    // Innanför cirkelradien
+                    Toast.makeText(MapsActivity.this, "Innanför cirkeln!", Toast.LENGTH_SHORT).show();
+                    showMes = false;
+                    showMes2 = true;
+                } else if (circle.getRadius() < distanceToPOI[0] && showMes2) {
+                    Toast.makeText(getApplicationContext(), "Utanför cirkeln!", Toast.LENGTH_SHORT).show();
+                    showMes = true;
+                    showMes2 = false;
+                }
+
+// här kan det vara saker
                 circleRadius(ojarenLatLng);
+
 
                 //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
             }
@@ -302,6 +343,7 @@ public class MapsActivity extends AppCompatActivity
 
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -322,7 +364,7 @@ public class MapsActivity extends AppCompatActivity
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(MapsActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -333,13 +375,10 @@ public class MapsActivity extends AppCompatActivity
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
-
-
-
 
 
     @Override
