@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/buttonColor"/>
-            <stroke android:color="@color/buttonColor" android:width="2dp" />
-            <!--corners allow us to make the rounded corners button-->
-            <corners android:radius="25dp" />
-        </shape>
-    </item>
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
+
+    <corners
+        android:radius="30dp"
+        />
+    <gradient
+        android:startColor="#f0f0f0"
+        android:endColor="#f0f0f0"
+        android:type="linear"
+        />
+
+
+    <stroke
+        android:width="0dp"
+
+        />
+
+
+
+
+</shape>
