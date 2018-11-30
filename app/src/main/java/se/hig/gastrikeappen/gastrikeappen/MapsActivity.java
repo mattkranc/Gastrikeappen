@@ -61,6 +61,10 @@ public class MapsActivity extends AppCompatActivity
     boolean showMes2 = true;
     boolean zoomIn = true;
     int mapState = 0;
+    Button infoButton;
+
+
+
 
     final LatLng ojarenLatLng = new LatLng(60.672884, 16.837481);
 
@@ -116,6 +120,15 @@ public class MapsActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 mGoogleMap.animateCamera(CameraUpdateFactory.zoomOut());
+            }
+        });
+
+        infoButton = findViewById(R.id.infoButton);
+        infoButton.setVisibility(View.GONE);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //info om en plats.
             }
         });
 
@@ -333,6 +346,7 @@ public class MapsActivity extends AppCompatActivity
             Toast.makeText(MapsActivity.this, "Innanför cirkeln!", Toast.LENGTH_SHORT).show();
             showMes = false;
             showMes2 = true;
+            infoButton.setVisibility(View.VISIBLE);
         } else if (circle.getRadius() < distanceToPOI[0] && showMes2) {
             Toast.makeText(getApplicationContext(), "Utanför cirkeln!", Toast.LENGTH_SHORT).show();
             showMes = true;

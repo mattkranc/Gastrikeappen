@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //kod för att visa score osv...
+                Intent myIntent = new Intent(MainActivity.this, ScoreActivity.class);
+                startActivity(myIntent);
             }
         });
     }

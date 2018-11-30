@@ -8,5 +8,6 @@
     <string name="change_map_view">Vy</string>
     <string name="zoomIn_button">+</string>
     <string name="zoomOut_button">-</string>
+    <string name="info_button">Information</string>
 
 </resources>
